@@ -47,7 +47,7 @@ const app = express();
 
 app.use('/', express.static(`./public`));
 
-//returns a middleware that creates a store, sets up the router, pre-fetches the necessary data
+//returns a middleware function that creates a store, sets up the router, pre-fetches the necessary data
 // and renders the page
 app.use(rechannel({
   routes,
