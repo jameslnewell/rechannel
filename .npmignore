@@ -1,6 +1,5 @@
 .idea
-node_module
+node_modules
 example
-lib
 .babelrc
 .gitignore

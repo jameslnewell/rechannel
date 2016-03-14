@@ -1,6 +1,6 @@
 # rechannel
 
-Opinionated glue for creating web apps with React and Redux.
+Opinionated glue for building web apps with React and Redux.
 
 Glues together `react`, `redux`, `react-router`, `react-router-redux`, `redial` and `redux-devtools-extension`.
 Useful for both client side _and_ UniversalJS apps.
@@ -93,3 +93,7 @@ Server specific options:
 - allow the `reducer` to be a single reducer function
 - allow the `middleware` and `enhancer` parameters to be a function call that receives the `req` in order to be configured e.g. `redux-effects-cookie`
 - clean-up `locals` passed to `redial`
+
+**Returns:**
+
+Returns nothing on the client. Returns an `express` middleware function on the server.

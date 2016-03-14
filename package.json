@@ -1,9 +1,9 @@
 {
   "name": "rechannel",
-  "version": "0.1.0",
-  "description": "Opinionated glue for creating web apps with `React` and `Redux`.",
-  "main": "lib/server.jsx",
-  "browser": "lib/client.jsx",
+  "version": "0.2.0",
+  "description": "Opinionated glue for building web apps with `React` and `Redux`.",
+  "main": "dist/lib/server.js",
+  "browser": "dist/lib/client.js",
   "peerDependencies": {
     "react": ">=0.14.0",
     "react-dom": ">=0.14.0",
