@@ -1,6 +1,6 @@
 # rechannel
 
-Opinionated glue for creating web apps with `react` and `redux`.
+Opinionated glue for creating web apps with React and Redux.
 
 Glues together `react`, `redux`, `react-router`, `react-router-redux`, `redial` and `redux-devtools-extension`.
 Useful for both client side _and_ UniversalJS apps.
