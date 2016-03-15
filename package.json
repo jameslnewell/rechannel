@@ -1,9 +1,13 @@
 {
   "name": "rechannel",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Opinionated glue for building web apps with `React` and `Redux`.",
   "main": "dist/lib/server.js",
   "browser": "dist/lib/client.js",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:jameslnewell/rechannel.git"
+  },
   "peerDependencies": {
     "react": ">=0.14.0",
     "react-dom": ">=0.14.0",
