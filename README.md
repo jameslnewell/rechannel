@@ -47,7 +47,7 @@ const app = express();
 
 app.use('/', express.static(`./public`));
 
-//returns a middleware function that creates a store, sets up the router, pre-fetches the necessary data
+//returns a middleware function that creates a store, sets up the router, pre-fetches necessary data
 // and renders the page
 app.use(rechannel({
   routes,
@@ -70,6 +70,9 @@ Try the [example](https://github.com/jameslnewell/rechannel/tree/master/example/
 rechannel(options : object)
 ```
 
+Create a store, set up the router, pre-fetch necessary data
+and render the page.
+
 **Options:**
 
 Common options:
@@ -91,6 +94,28 @@ Server specific options:
 **Returns:**
 
 Returns nothing on the client. Returns an `express` middleware function on the server.
+
+```
+createHtml(options : object)
+```
+
+Create a React component for rendering `<html>` on the server.
+
+**Options:**
+
+- `title : string|function`
+- `script : string`
+- `style : string`
+
+**Returns:**
+
+Returns a React component for rendering `<html>` on the server.
+
+## Change log
+
+### 0.3.0
+
+- break: turned the `Html` component into a factory function to allow customisation of the `<html>` title, script and style names
 
 ## To do
 

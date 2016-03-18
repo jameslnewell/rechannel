@@ -5,7 +5,9 @@ import {createStore, combineReducers, compose, applyMiddleware} from 'redux';
 import {match, RouterContext} from 'react-router';
 import {routerReducer} from 'react-router-redux';
 import {trigger} from 'redial';
-import Html from './Html';
+import createHtml from './createHtml';
+
+export {createHtml};
 
 /**
  *
@@ -24,7 +26,7 @@ export default function(options) {
   reducer = reducer || {};
   middleware = middleware || [];
   enhancer = enhancer || [];
-  const Component = html || Html;
+  const Component = html || createHtml();
 
   return (req, res, next) => {
 

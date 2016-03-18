@@ -1,5 +1,5 @@
 import express from 'express';
-import rechannel from '..';
+import rechannel, {createHtml} from '..';
 import routes from './routes';
 import reducer from './reducer';
 
@@ -9,7 +9,8 @@ app.use('/', express.static(`./public`));
 
 app.use(rechannel({
   routes,
-  reducer
+  reducer,
+  html: createHtml({title: 'fancy-pants-example'})
 }));
 
 const server = app.listen(8000, () => {
