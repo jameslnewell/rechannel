@@ -104,14 +104,18 @@ Create a React component for rendering `<html>` on the server.
 **Options:**
 
 - `title : string|function`
-- `script : string`
-- `style : string`
+- `script : string|Array<string>`
+- `style : string|Array<string>`
 
 **Returns:**
 
 Returns a React component for rendering `<html>` on the server.
 
 ## Change log
+
+### 0.4.0
+
+- add: `createHtml()` parameters `script` and `style` now accept an array of script and style files
 
 ### 0.3.0
 
