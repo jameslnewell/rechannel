@@ -1,4 +1,5 @@
 import React from 'react';
+import {renderToString} from 'react-dom/server';
 
 export default function Html(props) {
   const {state, children} = props;
@@ -11,7 +12,7 @@ export default function Html(props) {
         <link rel="stylesheet" href={'index.css'}/>
       </head>
       <body>
-        <div id="app" dangerouslySetInnerHtml={{__html: renderToString(children)}}/>
+        <div id="app" dangerouslySetInnerHTML={{__html: renderToString(children)}}/>
         <script dangerouslySetInnerHTML={{__html: `window.__INITIAL_STATE__=${JSON.stringify(state)}`}}/>
         <script src="index.js"></script>
       </body>
