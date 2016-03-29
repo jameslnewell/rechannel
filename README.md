@@ -113,6 +113,11 @@ Returns a React component for rendering `<html>` on the server.
 
 ## Change log
 
+### 0.4.2
+
+- fix: add keyword metadata
+
+
 ### 0.4.1
 
 - fix: `createHtml()` parameters `script` and `style` need to be cast to arrays

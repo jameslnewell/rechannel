@@ -1,7 +1,11 @@
 {
   "name": "rechannel",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Opinionated glue for building web apps with `React` and `Redux`.",
+  "keywords": [
+    "rechannel", "react", "react-redux", "redux", "react-router", "react-router-redux", "redial",
+    "universal", "universaljs", "isomorphic", "express", "middleware", "boilerplate", "glue"
+  ],
   "main": "dist/lib/server.js",
   "browser": "dist/lib/client.js",
   "repository": {
