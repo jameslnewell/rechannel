@@ -10,11 +10,11 @@ import cookie from 'component-cookie';
 /**
  * Render an app on the client
  * @param   {object}          options
- * @param   {function}        options.routes            Your react-router routes
+ * @param   {Element}         options.routes            Your react-router routes
  * @param   {object}          options.reducer           Your redux reducer
  * @param   {Array<function>} [options.middleware]      Your redux middleware(s)
  * @param   {Array<function>} [options.enhancer]        Your Redux enhancer(s)
- * @param   {function}        [options.element]         The HTMLElement which react will render into
+ * @param   {HTMLElement}     [options.element]         The HTMLElement which react will render into
  * @returns {function}
  */
 export default function(options) {
@@ -40,6 +40,11 @@ export default function(options) {
         : f => f
     )
   );
+
+  //create the routes if we've been given a factory function
+  if (typeof routes === 'function') {
+    routes = routes({getState: store.getState, dispatch: store.dispatch});
+  }
 
   //create the enhanced history
   const history = syncHistoryWithStore(browserHistory, store);

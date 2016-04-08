@@ -30,22 +30,27 @@ export default function(options) {
 
   return (req, res, next) => {
 
+    //create the store
+    const store = createStore(
+      combineReducers({
+        ...reducer,
+        routing: routerReducer
+      }),
+      undefined, //eslint-disable-line
+      compose(
+        applyMiddleware(...middleware),
+        ...enhancer
+      )
+    );
+
+    //create the routes if we've been given a factory function
+    if (typeof routes === 'function') {
+      routes = routes({getState: store.getState, dispatch: store.dispatch});
+    }
+
     match({routes, location: req.url}, (routeError, redirectLocation, renderProps) => {
 
       const render = () => {
-
-        //create the store
-        const store = createStore(
-          combineReducers({
-            ...reducer,
-            routing: routerReducer
-          }),
-          undefined, //eslint-disable-line
-          compose(
-            applyMiddleware(...middleware),
-            ...enhancer
-          )
-        );
 
         const locals = {
 

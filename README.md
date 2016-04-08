@@ -77,7 +77,7 @@ and render the page.
 
 Common options:
 
-- `routes : Component` _Required_. A route configuration. Learn more about configuring routes in the [React Router docs](https://github.com/reactjs/react-router/blob/master/docs/guides/RouteConfiguration.md).
+- `routes : Element|function` _Required_. A `<Route/>` element or a function creating a `<Route/>` element. Function are passed the `getState()` and `dispatch()` methods from the redux store (useful for restricting access in a `onEnter` hook). Learn more about configuring routes in the [React Router docs](https://github.com/reactjs/react-router/blob/master/docs/guides/RouteConfiguration.md).
 - `reducer : object` _Required_. A keyed object of reducer functions that may be passed to `combineReducers()`. Learn more about reducer functions in the [Redux docs](http://redux.js.org/docs/Glossary.html#reducer).
 - `middleware : array<function>` Optional. An array of middleware functions. Learn more about middleware functions in the [Redux docs](http://redux.js.org/docs/Glossary.html#middleware).
 - `enhancer : array<function>` Optional. An array of enhancer functions. Learn more about enhancer functions in the [Redux docs](http://redux.js.org/docs/Glossary.html#store-enhancer).
@@ -113,15 +113,17 @@ Returns a React component for rendering `<html>` on the server.
 
 ## Change log
 
+### 0.5.0
+
+- add:
+
 ### 0.4.2
 
 - fix: add keyword metadata
 
-
 ### 0.4.1
 
 - fix: `createHtml()` parameters `script` and `style` need to be cast to arrays
-
 
 ### 0.4.0
 
