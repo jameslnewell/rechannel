@@ -18,11 +18,12 @@
     "babel-preset-react": "^6.5.0",
     "babelify": "^7.2.0",
     "browserify": "^13.0.0",
+    "nodemon": "^1.9.1",
     "watchify": "^3.7.0"
   },
   "scripts": {
     "client:build": "browserify -t babelify --extension=.jsx client.js -o public/index.js",
     "client:watch": "watchify -t babelify --extension=.jsx client.js -o public/index.js",
-    "start": "babel-node server.js"
+    "start": "nodemon --exec babel-node -- server.js"
   }
 }

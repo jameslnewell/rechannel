@@ -82,6 +82,10 @@ Common options:
 - `middleware : array<function>` Optional. An array of middleware functions. Learn more about middleware functions in the [Redux docs](http://redux.js.org/docs/Glossary.html#middleware).
 - `enhancer : array<function>` Optional. An array of enhancer functions. Learn more about enhancer functions in the [Redux docs](http://redux.js.org/docs/Glossary.html#store-enhancer).
 
+Hooks:
+
+- `beforeLoad : function`  Optional. Called before data is pre-loaded. May return a promise.
+
 Client specific options:
 
 - `element : HTMLElement` Optional. The `HTMLElement` which React will render into. Defaults to `document.querySelector('#app')`.
@@ -113,9 +117,13 @@ Returns a React component for rendering `<html>` on the server.
 
 ## Change log
 
+### 0.6.0
+
+- add: added `beforeLoad()` hook
+
 ### 0.5.0
 
-- add:
+- add: allow routes to be a function
 
 ### 0.4.2
 
@@ -135,6 +143,7 @@ Returns a React component for rendering `<html>` on the server.
 
 ## To do
 
+- rename `fetch` trigger to `load`
 - allow the `reducer` to be a single reducer function
 - allow the `middleware` and `enhancer` parameters to be a function call that receives the `req` in order to be configured e.g. `redux-effects-cookie`
 - clean-up `locals` passed to `redial`

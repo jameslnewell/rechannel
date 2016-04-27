@@ -7,6 +7,13 @@ import {match, Router, browserHistory} from 'react-router';
 import {syncHistoryWithStore, routerReducer, routerMiddleware} from 'react-router-redux';
 import cookie from 'component-cookie';
 
+const defaultOptions = {
+  reducer: {},
+  middleware: [],
+  enhancer: [],
+  beforeLoad: () => Promise.resolve()
+};
+
 /**
  * Render an app on the client
  * @param   {object}          options
@@ -18,11 +25,13 @@ import cookie from 'component-cookie';
  * @returns {function}
  */
 export default function(options) {
-  let {routes, reducer, middleware, enhancer, element} = options;
 
-  reducer = reducer || {};
-  middleware = middleware || [];
-  enhancer = enhancer || [];
+  let {
+    routes, reducer, middleware, enhancer,
+    beforeLoad,
+    element
+  } = {...defaultOptions, ...options};
+
   element = element || document.querySelector('#app');
 
   //create the store
@@ -49,8 +58,10 @@ export default function(options) {
   //create the enhanced history
   const history = syncHistoryWithStore(browserHistory, store);
 
+  //when the URL changes
   history.listen(location => {
 
+    //route the URL to a component
     match({routes, location}, (routeError, redirectLocation, renderProps) => {
 
       if (window.__INITIAL_STATE__) {     //the current page was rendered by the server, we don't need to fetch
@@ -71,7 +82,11 @@ export default function(options) {
 
           };
 
-          trigger('fetch', renderProps.components, locals);
+          //fetch data required by the component
+          Promise.resolve()
+            .then(() => beforeLoad(locals))
+            .then(() => trigger('fetch', renderProps.components, locals))
+          ;
 
         }
 
@@ -81,6 +96,7 @@ export default function(options) {
 
   });
 
+  //render the app
   render(
     <Provider store={store}>
       <Router history={history} routes={routes}/>

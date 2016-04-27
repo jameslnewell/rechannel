@@ -7,7 +7,12 @@ import {routerReducer} from 'react-router-redux';
 import {trigger} from 'redial';
 import createHtml from './createHtml';
 
-export {createHtml};
+const defaultOptions = {
+  reducer: {},
+  middleware: [],
+  enhancer: [],
+  beforeLoad: () => Promise.resolve()
+};
 
 /**
  *
@@ -21,11 +26,13 @@ export {createHtml};
  * @returns {function}
  */
 export default function(options) {
-  let {routes, reducer, middleware, enhancer, html, send} = options;
 
-  reducer = reducer || {};
-  middleware = middleware || [];
-  enhancer = enhancer || [];
+  let {
+    routes, reducer, middleware, enhancer,
+    beforeLoad,
+    html, send
+  } = {...defaultOptions, ...options};
+
   const Component = html || createHtml();
 
   return (req, res, next) => {
@@ -48,6 +55,7 @@ export default function(options) {
       routes = routes({getState: store.getState, dispatch: store.dispatch});
     }
 
+    //route the URL to a component
     match({routes, location: req.url}, (routeError, redirectLocation, renderProps) => {
 
       const render = () => {
@@ -64,17 +72,22 @@ export default function(options) {
 
         };
 
-        trigger('fetch', renderProps.components, locals)
+        //fetch data required by the component
+        Promise.resolve()
+          .then(() => beforeLoad(locals))
+          .then(() => trigger('fetch', renderProps.components, locals))
           .then(() => {
 
+            //render the app
             const elements = (
-              <Component state={store.getState()} config={{cookieName: 'Quote'}}>
+              <Component state={store.getState()}>
                 <Provider store={store}>
                   <RouterContext {...renderProps} />
                 </Provider>
               </Component>
             );
 
+            //render the layout
             let html = '';
             try {
               html = `<!doctype html>${renderToStaticMarkup(elements)}`;
@@ -110,3 +123,5 @@ export default function(options) {
     });
   };
 }
+
+export {createHtml};
