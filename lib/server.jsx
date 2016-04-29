@@ -11,7 +11,8 @@ const defaultOptions = {
   reducer: {},
   middleware: [],
   enhancer: [],
-  beforeLoad: () => Promise.resolve()
+  $init: () => Promise.resolve(),
+  $load: () => Promise.resolve()
 };
 
 /**
@@ -29,7 +30,7 @@ export default function(options) {
 
   let {
     routes, reducer, middleware, enhancer,
-    beforeLoad,
+    $init, $load,
     html, send
   } = {...defaultOptions, ...options};
 
@@ -50,77 +51,85 @@ export default function(options) {
       )
     );
 
-    //create the routes if we've been given a factory function
-    if (typeof routes === 'function') {
-      routes = routes({getState: store.getState, dispatch: store.dispatch});
-    }
+    Promise.resolve($init({getState: store.getState, dispatch: store.dispatch}))
+      .then(() => {
 
-    //route the URL to a component
-    match({routes, location: req.url}, (routeError, redirectLocation, renderProps) => {
+        //create the routes if we've been given a factory function
+        if (typeof routes === 'function') {
+          routes = routes({getState: store.getState, dispatch: store.dispatch});
+        }
 
-      const render = () => {
+        //route the URL to a component
+        match({routes, location: req.url}, (routeError, redirectLocation, renderProps) => {
 
-        const locals = {
+          const render = () => {
 
-          dispatch: store.dispatch,
-          getState: store.getState,
+            const locals = {
 
-          location: renderProps.location,
-          params: renderProps.params,
+              dispatch: store.dispatch,
+              getState: store.getState,
 
-          cookies: req.cookies
+              location: renderProps.location,
+              params: renderProps.params,
 
-        };
+              cookies: req.cookies || {}
 
-        //fetch data required by the component
-        Promise.resolve()
-          .then(() => beforeLoad(locals))
-          .then(() => trigger('fetch', renderProps.components, locals))
-          .then(() => {
+            };
 
-            //render the app
-            const elements = (
-              <Component state={store.getState()}>
-                <Provider store={store}>
-                  <RouterContext {...renderProps} />
-                </Provider>
-              </Component>
-            );
+            //fetch data required by the component
+            Promise.resolve()
+              .then(() => trigger('fetch', renderProps.components, locals))
+              .then(() => $load(locals))
+              .then(() => {
 
-            //render the layout
-            let html = '';
-            try {
-              html = `<!doctype html>${renderToStaticMarkup(elements)}`;
-            } catch (renderError) {
-              return next(renderError);
-            }
+                //render the app
+                const elements = (
+                  <Component state={store.getState()}>
+                    <Provider store={store}>
+                      <RouterContext {...renderProps} />
+                    </Provider>
+                  </Component>
+                );
 
-            //send the response
-            if (send) {
-              send(res, html);
-            } else {
-              res.send(html);
-            }
+                //render the layout
+                let html = '';
+                try {
+                  html = `<!doctype html>${renderToStaticMarkup(elements)}`;
+                } catch (renderError) {
+                  return next(renderError);
+                }
 
-          })
-          .catch(next)
-        ;
+                //send the response
+                if (send) {
+                  send(res, html);
+                } else {
+                  res.send(html);
+                }
 
-      };
+              })
+              .catch(next)
+            ;
 
-      if (routeError) {                 //500 - an error ocurred during routing
-        return next(routeError);
-      } else if (redirectLocation) {    //302 - routing matched the URL to a redirect
-        return res
-          .redirect(302, `${redirectLocation.pathname}${redirectLocation.search}`)
-        ;
-      } else if (renderProps) {         //200 - routing matched the URL to a component
-        render();
-      } else {                          //404 - routing could not match a URL to a component
-        return next();
-      }
+          };
 
-    });
+          if (routeError) {                 //500 - an error ocurred during routing
+            return next(routeError);
+          } else if (redirectLocation) {    //302 - routing matched the URL to a redirect
+            return res
+              .redirect(302, `${redirectLocation.pathname}${redirectLocation.search}`)
+            ;
+          } else if (renderProps) {         //200 - routing matched the URL to a component
+            render();
+          } else {                          //404 - routing could not match a URL to a component
+            return next();
+          }
+
+        });
+
+      })
+      .catch(next)
+    ;
+
   };
 }
 

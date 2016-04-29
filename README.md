@@ -84,7 +84,8 @@ Common options:
 
 Hooks:
 
-- `beforeLoad : function`  Optional. Called before data is pre-loaded. May return a promise.
+- `$init : function`  Optional. Called after the redux store is initialised. May return a promise.
+- `$load : function`  Optional. Called after any data is (pre-)loaded. May return a promise.
 
 Client specific options:
 
@@ -119,7 +120,7 @@ Returns a React component for rendering `<html>` on the server.
 
 ### 0.6.0
 
-- add: added `beforeLoad()` hook
+- add: added `$init()` and `$load()` hooks
 
 ### 0.5.0
 
@@ -143,7 +144,8 @@ Returns a React component for rendering `<html>` on the server.
 
 ## To do
 
+- write tests
 - rename `fetch` trigger to `load`
 - allow the `reducer` to be a single reducer function
 - allow the `middleware` and `enhancer` parameters to be a function call that receives the `req` in order to be configured e.g. `redux-effects-cookie`
-- clean-up `locals` passed to `redial`
+- clean-up `locals` passed to `redial` - allow them to be user configurable

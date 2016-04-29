@@ -11,7 +11,8 @@ const defaultOptions = {
   reducer: {},
   middleware: [],
   enhancer: [],
-  beforeLoad: () => Promise.resolve()
+  $init: () => Promise.resolve(),
+  $load: () => Promise.resolve()
 };
 
 /**
@@ -28,7 +29,7 @@ export default function(options) {
 
   let {
     routes, reducer, middleware, enhancer,
-    beforeLoad,
+    $init, $load,
     element
   } = {...defaultOptions, ...options};
 
@@ -50,58 +51,65 @@ export default function(options) {
     )
   );
 
-  //create the routes if we've been given a factory function
-  if (typeof routes === 'function') {
-    routes = routes({getState: store.getState, dispatch: store.dispatch});
-  }
+  Promise.resolve($init({getState: store.getState, dispatch: store.dispatch}))
+    .then(() => {
 
-  //create the enhanced history
-  const history = syncHistoryWithStore(browserHistory, store);
-
-  //when the URL changes
-  history.listen(location => {
-
-    //route the URL to a component
-    match({routes, location}, (routeError, redirectLocation, renderProps) => {
-
-      if (window.__INITIAL_STATE__) {     //the current page was rendered by the server, we don't need to fetch
-        delete window.__INITIAL_STATE__;
-      } else {                    //the current page was navigated to on the client, we need to fetch
-
-        if (renderProps) {
-
-          const locals = {
-
-            dispatch: store.dispatch,
-            getState: store.getState,
-
-            location: renderProps.location,
-            params: renderProps.params,
-
-            cookies: cookie()
-
-          };
-
-          //fetch data required by the component
-          Promise.resolve()
-            .then(() => beforeLoad(locals))
-            .then(() => trigger('fetch', renderProps.components, locals))
-          ;
-
-        }
-
+      //create the routes if we've been given a factory function
+      if (typeof routes === 'function') {
+        routes = routes({getState: store.getState, dispatch: store.dispatch});
       }
 
-    });
+      //create the enhanced history
+      const history = syncHistoryWithStore(browserHistory, store);
 
-  });
+      //when the URL changes
+      history.listen(location => {
 
-  //render the app
-  render(
-    <Provider store={store}>
-      <Router history={history} routes={routes}/>
-    </Provider>,
-    element
-  );
+        //route the URL to a component
+        match({routes, location}, (routeError, redirectLocation, renderProps) => {
+
+          if (window.__INITIAL_STATE__) {     //the current page was rendered by the server, we don't need to fetch
+            delete window.__INITIAL_STATE__;
+          } else {                    //the current page was navigated to on the client, we need to fetch
+
+            if (renderProps) {
+
+              const locals = {
+
+                dispatch: store.dispatch,
+                getState: store.getState,
+
+                location: renderProps.location,
+                params: renderProps.params,
+
+                cookies: cookie()
+
+              };
+
+              //fetch data required by the component
+              Promise.resolve()
+                .then(() => trigger('fetch', renderProps.components, locals))
+                .then(() => $load(locals))
+              ;
+
+            }
+
+          }
+
+        });
+
+      });
+
+      //render the app
+      render(
+        <Provider store={store}>
+          <Router history={history} routes={routes}/>
+        </Provider>,
+        element
+      );
+
+    })
+    .catch(err => console.eror(err))
+  ;
 
 }
