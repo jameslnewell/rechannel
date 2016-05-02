@@ -51,12 +51,14 @@ export default function(options) {
     )
   );
 
-  Promise.resolve($init({getState: store.getState, dispatch: store.dispatch}))
+  const cookies = cookie();
+
+  Promise.resolve($init({getState: store.getState, dispatch: store.dispatch, cookies}))
     .then(() => {
 
       //create the routes if we've been given a factory function
       if (typeof routes === 'function') {
-        routes = routes({getState: store.getState, dispatch: store.dispatch});
+        routes = routes({getState: store.getState, dispatch: store.dispatch, cookies});
       }
 
       //create the enhanced history
@@ -82,7 +84,7 @@ export default function(options) {
                 location: renderProps.location,
                 params: renderProps.params,
 
-                cookies: cookie()
+                cookies
 
               };
 

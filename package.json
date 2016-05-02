@@ -1,6 +1,6 @@
 {
   "name": "rechannel",
-  "version": "0.6.0-rc.2",
+  "version": "0.6.0",
   "description": "Opinionated glue for building web apps with `React` and `Redux`.",
   "keywords": [
     "rechannel", "react", "react-redux", "redux", "react-router", "react-router-redux", "redial",
