@@ -111,7 +111,7 @@ export default function(options) {
       );
 
     })
-    .catch(err => console.eror(err))
+    .catch(err => console.error(err))
   ;
 
 }
