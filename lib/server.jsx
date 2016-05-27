@@ -63,7 +63,7 @@ export default function(options) {
         }
 
         //route the URL to a component
-        match({routesForRequest, location: req.url}, (routeError, redirectLocation, renderProps) => {
+        match({routes: routesForRequest, location: req.url}, (routeError, redirectLocation, renderProps) => {
 
           const render = () => {
 
