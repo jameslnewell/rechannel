@@ -52,14 +52,15 @@ export default function(options) {
     );
 
     const cookies = req.cookies || {};
-
-    Promise.resolve($init({getState: store.getState, dispatch: store.dispatch, cookies}))
+    const query = req.query || {};
+    
+    Promise.resolve($init({getState: store.getState, dispatch: store.dispatch, cookies, query}))
       .then(() => {
 
         //create the routes if we've been given a factory function
         let routesForRequest = routes;
         if (typeof routes === 'function') {
-          routesForRequest = routes({getState: store.getState, dispatch: store.dispatch, cookies});
+          routesForRequest = routes({getState: store.getState, dispatch: store.dispatch, query, cookies});
         }
 
         //route the URL to a component
@@ -75,7 +76,8 @@ export default function(options) {
               location: renderProps.location,
               params: renderProps.params,
 
-              cookies
+              cookies,
+              query
 
             };
 

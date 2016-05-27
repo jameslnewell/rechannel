@@ -100,6 +100,9 @@ Server specific options:
 
 Returns nothing on the client. Returns an `express` middleware function on the server.
 
+**Note:** On the client, routes aren't re-created for each time you navigate to a new page, if you're using a factory function to create the routes and utilising the `cookies` or `query` parameters, 
+the routes won't be re-created with the new query or cookie values. The route factory function will only be re-evaluated when you re-load the page.
+
 ```
 createHtml(options : object)
 ```
@@ -118,10 +121,13 @@ Returns a React component for rendering `<html>` on the server.
 
 ## Change log
 
+### 0.7.0
+
+- add: added a `query` parameter to the `$init`, `$load` and `fetch` hooks
+
 ### 0.6.2-3
 
 - fix: fixed a bug where routes weren't being re-created per request so conditional routing resulted in outcomes
-
 
 ### 0.6.0
 

@@ -6,6 +6,7 @@ import {createStore, combineReducers, compose, applyMiddleware} from 'redux';
 import {match, Router, browserHistory} from 'react-router';
 import {syncHistoryWithStore, routerReducer, routerMiddleware} from 'react-router-redux';
 import cookie from 'component-cookie';
+import qs from 'qs';
 
 const defaultOptions = {
   reducer: {},
@@ -14,6 +15,14 @@ const defaultOptions = {
   $init: () => Promise.resolve(),
   $load: () => Promise.resolve()
 };
+
+function extractQueryString(location) {
+  let queryString = location.search;
+  if (queryString.length !== '') {
+    queryString = queryString.substr(1);
+  }
+  return qs.parse(queryString);
+}
 
 /**
  * Render an app on the client
@@ -52,13 +61,14 @@ export default function(options) {
   );
 
   const cookies = cookie();
-
-  Promise.resolve($init({getState: store.getState, dispatch: store.dispatch, cookies}))
+  const query = extractQueryString(window.location);
+  
+  Promise.resolve($init({getState: store.getState, dispatch: store.dispatch, cookies, query}))
     .then(() => {
 
       //create the routes if we've been given a factory function
       if (typeof routes === 'function') {
-        routes = routes({getState: store.getState, dispatch: store.dispatch, cookies});
+        routes = routes({getState: store.getState, dispatch: store.dispatch, cookies, query});
       }
 
       //create the enhanced history
@@ -84,7 +94,8 @@ export default function(options) {
                 location: renderProps.location,
                 params: renderProps.params,
 
-                cookies
+                cookies,
+                query
 
               };
 

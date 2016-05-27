@@ -3,8 +3,20 @@
   "version": "0.6.3",
   "description": "Opinionated glue for building web apps with `React` and `Redux`.",
   "keywords": [
-    "rechannel", "react", "react-redux", "redux", "react-router", "react-router-redux", "redial",
-    "universal", "universaljs", "isomorphic", "express", "middleware", "boilerplate", "glue"
+    "rechannel",
+    "react",
+    "react-redux",
+    "redux",
+    "react-router",
+    "react-router-redux",
+    "redial",
+    "universal",
+    "universaljs",
+    "isomorphic",
+    "express",
+    "middleware",
+    "boilerplate",
+    "glue"
   ],
   "main": "dist/lib/server.js",
   "browser": "dist/lib/client.js",
@@ -22,7 +34,8 @@
     "redux": ">=3.0.0"
   },
   "dependencies": {
-    "component-cookie": "1.1.2"
+    "component-cookie": "1.1.2",
+    "qs": "^6.2.0"
   },
   "devDependencies": {
     "babel-cli": "^6.6.5",
