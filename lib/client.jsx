@@ -6,7 +6,7 @@ import {createStore, combineReducers, compose, applyMiddleware} from 'redux';
 import {match, Router, browserHistory} from 'react-router';
 import {syncHistoryWithStore, routerReducer, routerMiddleware} from 'react-router-redux';
 import cookie from 'component-cookie';
-import qs from 'qs';
+import qs from 'query-string';
 
 const defaultOptions = {
   reducer: {},
@@ -15,14 +15,6 @@ const defaultOptions = {
   $init: () => Promise.resolve(),
   $load: () => Promise.resolve()
 };
-
-function extractQueryString(location) {
-  let queryString = location.search;
-  if (queryString.length !== '') {
-    queryString = queryString.substr(1);
-  }
-  return qs.parse(queryString);
-}
 
 /**
  * Render an app on the client
@@ -61,7 +53,7 @@ export default function(options) {
   );
 
   const cookies = cookie();
-  const query = extractQueryString(window.location);
+  const query = qs.parse(window.location.search);
   
   Promise.resolve($init({getState: store.getState, dispatch: store.dispatch, cookies, query}))
     .then(() => {
