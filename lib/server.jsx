@@ -28,7 +28,7 @@ const defaultOptions = {
  */
 export default function(options) {
 
-  let {
+  const {
     routes, reducer, middleware, enhancer,
     $init, $load,
     html, send
@@ -57,12 +57,13 @@ export default function(options) {
       .then(() => {
 
         //create the routes if we've been given a factory function
+        let routesForRequest = routes;
         if (typeof routes === 'function') {
-          routes = routes({getState: store.getState, dispatch: store.dispatch, cookies});
+          routesForRequest = routes({getState: store.getState, dispatch: store.dispatch, cookies});
         }
 
         //route the URL to a component
-        match({routes, location: req.url}, (routeError, redirectLocation, renderProps) => {
+        match({routesForRequest, location: req.url}, (routeError, redirectLocation, renderProps) => {
 
           const render = () => {
 
@@ -94,18 +95,18 @@ export default function(options) {
                 );
 
                 //render the layout
-                let html = '';
+                let htmlForResponse = '';
                 try {
-                  html = `<!doctype html>${renderToStaticMarkup(elements)}`;
+                  htmlForResponse = `<!doctype html>${renderToStaticMarkup(elements)}`;
                 } catch (renderError) {
                   return next(renderError);
                 }
 
                 //send the response
                 if (send) {
-                  send(res, html);
+                  send(res, htmlForResponse);
                 } else {
-                  res.send(html);
+                  res.send(htmlForResponse);
                 }
 
               })

@@ -118,6 +118,11 @@ Returns a React component for rendering `<html>` on the server.
 
 ## Change log
 
+### 0.6.2
+
+- fix: fixed a bug where routes weren't being re-created per request so conditional routing resulted in outcomes
+
+
 ### 0.6.0
 
 - add: added `$init()` and `$load()` hooks
