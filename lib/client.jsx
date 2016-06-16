@@ -3,7 +3,7 @@ import {render} from 'react-dom';
 import {trigger} from 'redial';
 import {Provider} from 'react-redux';
 import {createStore, combineReducers, compose, applyMiddleware} from 'redux';
-import {match, Router, browserHistory} from 'react-router';
+import {match, Router, browserHistory, useRouterHistory} from 'react-router';
 import {syncHistoryWithStore, routerReducer, routerMiddleware} from 'react-router-redux';
 import cookie from 'component-cookie';
 import qs from 'query-string';
@@ -24,6 +24,7 @@ const defaultOptions = {
  * @param   {Array<function>} [options.middleware]      Your redux middleware(s)
  * @param   {Array<function>} [options.enhancer]        Your Redux enhancer(s)
  * @param   {HTMLElement}     [options.element]         The HTMLElement which react will render into
+ * @param   {History}         [options.history]         The history instance which react-router will use
  * @returns {function}
  */
 export default function(options) {
@@ -31,10 +32,18 @@ export default function(options) {
   let {
     routes, reducer, middleware, enhancer,
     $init, $load,
-    element
+    element, history
   } = {...defaultOptions, ...options};
 
+  //get the app element to render into
   element = element || document.querySelector('#app');
+
+  //create or enhance the history
+  if (history) {
+    history = useRouterHistory(history);
+  } else {
+    history = browserHistory;
+  }
 
   //create the store
   const store = createStore(
@@ -44,7 +53,7 @@ export default function(options) {
     }),
     window.__INITIAL_STATE__,
     compose(
-      applyMiddleware(...middleware, routerMiddleware(browserHistory)),
+      applyMiddleware(...middleware, routerMiddleware(history)),
       ...enhancer,
       typeof window === 'object' && typeof window.devToolsExtension !== 'undefined'
         ? window.devToolsExtension()
@@ -54,7 +63,7 @@ export default function(options) {
 
   const cookies = cookie();
   const query = qs.parse(window.location.search);
-  
+
   Promise.resolve($init({getState: store.getState, dispatch: store.dispatch, cookies, query}))
     .then(() => {
 
@@ -64,7 +73,7 @@ export default function(options) {
       }
 
       //create the enhanced history
-      const history = syncHistoryWithStore(browserHistory, store);
+      const history = syncHistoryWithStore(history, store);
 
       //when the URL changes
       history.listen(location => {

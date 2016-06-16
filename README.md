@@ -90,6 +90,7 @@ Hooks:
 Client specific options:
 
 - `element : HTMLElement` Optional. The `HTMLElement` which React will render into. Defaults to `document.querySelector('#app')`.
+- `history : History` Optional. The [history](https://www.npmjs.com/package/history) instance used by `react-router`. The history will be enhanced by `react-router`'s `useRouterHistory` method and `react-router-redux`'s `syncHistoryWithStore` method. Defaults to the `browserHistory` instance imported from `react-router`. 
 
 Server specific options:
 
@@ -100,7 +101,7 @@ Server specific options:
 
 Returns nothing on the client. Returns an `express` middleware function on the server.
 
-**Note:** On the client, routes aren't re-created for each time you navigate to a new page, if you're using a factory function to create the routes and utilising the `cookies` or `query` parameters, 
+**Note:** On the client, routes aren't re-created for each time you navigate to a new page, if you're using a factory function to create the routes and utilising the `cookies` or `query` parameters,
 the routes won't be re-created with the new query or cookie values. The route factory function will only be re-evaluated when you re-load the page.
 
 ```
