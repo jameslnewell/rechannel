@@ -94,7 +94,7 @@ Client specific options:
 
 Server specific options:
 
-- `html : Component` Optional. A component that renders the root HTML. Passed the Redux `state` and the React Router component(s) as `children` via `props`. Defaults to [this component](https://github.com/jameslnewell/rechannel/tree/master/lib/Html.js).
+- `html : Component` Optional. A component that renders the root HTML. Passed the Redux `state` and the React Router component(s) as `children` via `props`. Defaults to [this component](https://github.com/jameslnewell/rechannel/tree/master/lib/createHtml.js).
 - `send : function(res, html)` Optional. A function that allows customisation of the response sent by the server. Passed the response object and a HTML string.
 
 **Returns:**
