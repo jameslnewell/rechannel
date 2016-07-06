@@ -22,8 +22,9 @@
     "watchify": "^3.7.0"
   },
   "scripts": {
-    "client:build": "browserify -t babelify --extension=.jsx client.js -o public/index.js",
-    "client:watch": "watchify -t babelify --extension=.jsx client.js -o public/index.js",
+    "clean": "rm -rf ./public && mkdir ./public",
+    "build": "browserify -t babelify --extension=.jsx client.js -o public/index.js",
+    "watch": "watchify -t babelify --extension=.jsx client.js -o public/index.js",
     "start": "nodemon --exec babel-node -- server.js"
   }
 }

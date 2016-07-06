@@ -2,11 +2,14 @@ import React from 'react';
 import {render} from 'react-dom';
 import {trigger} from 'redial';
 import {Provider} from 'react-redux';
+import {createHistory} from 'history';
 import {createStore, combineReducers, compose, applyMiddleware} from 'redux';
-import {match, Router, browserHistory, useRouterHistory} from 'react-router';
+import {match, Router, useRouterHistory, browserHistory} from 'react-router';
 import {syncHistoryWithStore, routerReducer, routerMiddleware} from 'react-router-redux';
 import cookie from 'component-cookie';
 import qs from 'query-string';
+
+const isDevMode = process.env.NODE_ENV !== 'production';
 
 const defaultOptions = {
   reducer: {},
@@ -23,26 +26,37 @@ const defaultOptions = {
  * @param   {object}          options.reducer           Your redux reducer
  * @param   {Array<function>} [options.middleware]      Your redux middleware(s)
  * @param   {Array<function>} [options.enhancer]        Your Redux enhancer(s)
+ * @param   {History}         [options.history]         Your react-router history instance
  * @param   {HTMLElement}     [options.element]         The HTMLElement which react will render into
- * @param   {History}         [options.history]         The history instance which react-router will use
  * @returns {function}
  */
 export default function(options) {
 
   let {
-    routes, reducer, middleware, enhancer,
+    routes, reducer, middleware, enhancer, history,
     $init, $load,
-    element, history
+    element
   } = {...defaultOptions, ...options};
 
   //get the app element to render into
   element = element || document.querySelector('#app');
 
-  //create or enhance the history
-  if (history) {
-    history = useRouterHistory(history);
-  } else {
+  //validate options
+  if (isDevMode) {
+    if (typeof reducer !== 'object') {
+      throw new Error('Your `reducer` must be an object passable to `combineReducers`.');
+    }
+  }
+
+  //use the browser history if the user hasn't specified one
+  if (!history) {
     history = browserHistory;
+  }
+
+  //add middleware to freeze the redux state
+  const allTheMiddleware = [...middleware, routerMiddleware(history)];
+  if (isDevMode) {
+    allTheMiddleware.unshift(require('redux-immutable-state-invariant')())
   }
 
   //create the store
@@ -53,7 +67,7 @@ export default function(options) {
     }),
     window.__INITIAL_STATE__,
     compose(
-      applyMiddleware(...middleware, routerMiddleware(history)),
+      applyMiddleware(...allTheMiddleware),
       ...enhancer,
       typeof window === 'object' && typeof window.devToolsExtension !== 'undefined'
         ? window.devToolsExtension()
@@ -73,10 +87,10 @@ export default function(options) {
       }
 
       //create the enhanced history
-      const history = syncHistoryWithStore(history, store);
+      const enhancedHistory = syncHistoryWithStore(history, store);
 
       //when the URL changes
-      history.listen(location => {
+      enhancedHistory.listen(location => {
 
         //route the URL to a component
         match({routes, location}, (routeError, redirectLocation, renderProps) => {
@@ -117,7 +131,7 @@ export default function(options) {
       //render the app
       render(
         <Provider store={store}>
-          <Router history={history} routes={routes}/>
+          <Router history={enhancedHistory} routes={routes}/>
         </Provider>,
         element
       );

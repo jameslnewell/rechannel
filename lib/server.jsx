@@ -7,6 +7,8 @@ import {routerReducer} from 'react-router-redux';
 import {trigger} from 'redial';
 import createHtml from './createHtml';
 
+const isDevMode = process.env.NODE_ENV !== 'production';
+
 const defaultOptions = {
   reducer: {},
   middleware: [],
@@ -22,6 +24,7 @@ const defaultOptions = {
  * @param   {object}          options.reducer           Your redux reducer
  * @param   {Array<function>} [options.middleware]      Your redux middleware(s)
  * @param   {Array<function>} [options.enhancer]        Your Redux enhancer(s)
+ * @param   {History}         [options.history]         Your react-router history instance
  * @param   {Component}       [options.html]            Your root HTML component
  * @param   {function}        [options.send]            A function
  * @returns {function}
@@ -29,12 +32,25 @@ const defaultOptions = {
 export default function(options) {
 
   const {
-    routes, reducer, middleware, enhancer,
+    routes, reducer, middleware, enhancer, history,
     $init, $load,
     html, send
   } = {...defaultOptions, ...options};
 
   const Component = html || createHtml();
+
+  //validate options
+  if (isDevMode) {
+    if (typeof reducer !== 'object') {
+      throw new Error('Your `reducer` must be an object passable to `combineReducers`.');
+    }
+  }
+
+  //add middleware to freeze the redux state
+  const allTheMiddleware = [...middleware];
+  if (isDevMode) {
+    allTheMiddleware.push(require('redux-immutable-state-invariant')())
+  }
 
   return (req, res, next) => {
 
@@ -46,14 +62,14 @@ export default function(options) {
       }),
       undefined, //eslint-disable-line
       compose(
-        applyMiddleware(...middleware),
+        applyMiddleware(...allTheMiddleware),
         ...enhancer
       )
     );
 
     const cookies = req.cookies || {};
     const query = req.query || {};
-    
+
     Promise.resolve($init({getState: store.getState, dispatch: store.dispatch, cookies, query}))
       .then(() => {
 
@@ -64,7 +80,7 @@ export default function(options) {
         }
 
         //route the URL to a component
-        match({routes: routesForRequest, location: req.url}, (routeError, redirectLocation, renderProps) => {
+        match({routes: routesForRequest, location: req.url, history}, (routeError, redirectLocation, renderProps) => {
 
           const render = () => {
 

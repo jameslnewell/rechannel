@@ -66,7 +66,7 @@ Try the [example](https://github.com/jameslnewell/rechannel/tree/master/example/
 
 ## API
 
-```
+```js
 rechannel(options : object)
 ```
 
@@ -81,6 +81,7 @@ Common options:
 - `reducer : object` _Required_. A keyed object of reducer functions that may be passed to `combineReducers()`. Learn more about reducer functions in the [Redux docs](http://redux.js.org/docs/Glossary.html#reducer).
 - `middleware : array<function>` Optional. An array of middleware functions. Learn more about middleware functions in the [Redux docs](http://redux.js.org/docs/Glossary.html#middleware).
 - `enhancer : array<function>` Optional. An array of enhancer functions. Learn more about enhancer functions in the [Redux docs](http://redux.js.org/docs/Glossary.html#store-enhancer).
+- `history : History` Optional. A [history](https://www.npmjs.com/package/history) instance. Default's to `react-router`'s `browserHistory` on the client and the result of `react-router`'s `createMemoryHistory` on the server. Learn more about history objects in the `react-router` [Histories docs](https://github.com/reactjs/react-router/blob/master/docs/guides/Histories.md).
 
 Hooks:
 
@@ -90,7 +91,6 @@ Hooks:
 Client specific options:
 
 - `element : HTMLElement` Optional. The `HTMLElement` which React will render into. Defaults to `document.querySelector('#app')`.
-- `history : History` Optional. The [history](https://www.npmjs.com/package/history) instance used by `react-router`. The history will be enhanced by `react-router`'s `useRouterHistory` method and `react-router-redux`'s `syncHistoryWithStore` method. Defaults to the `browserHistory` instance imported from `react-router`. 
 
 Server specific options:
 
@@ -104,7 +104,7 @@ Returns nothing on the client. Returns an `express` middleware function on the s
 **Note:** On the client, routes aren't re-created for each time you navigate to a new page, if you're using a factory function to create the routes and utilising the `cookies` or `query` parameters,
 the routes won't be re-created with the new query or cookie values. The route factory function will only be re-evaluated when you re-load the page.
 
-```
+```js
 createHtml(options : object)
 ```
 
@@ -121,6 +121,12 @@ Create a React component for rendering `<html>` on the server.
 Returns a React component for rendering `<html>` on the server.
 
 ## Change log
+
+### 0.8.0
+
+- add: added the ability to provide a custom `history` object
+- add: added `redux-immutable-state-invariant` to non-production builds which trigger an error when the redux state has been mutated
+- add: added validation around some of the `options` to assist developers in finding problems earlier
 
 ### 0.7.0
 
