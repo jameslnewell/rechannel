@@ -25,13 +25,13 @@
     "url": "git@github.com:jameslnewell/rechannel.git"
   },
   "peerDependencies": {
-    "react": ">=0.14.0",
-    "react-dom": ">=0.14.0",
-    "react-redux": ">=4.0.0",
-    "react-router": ">=2.0.0",
-    "react-router-redux": ">=4.0.0",
-    "redial": ">=0.4.0",
-    "redux": ">=3.0.0"
+    "react": "^0.14.0 || ^15.0.0",
+    "react-dom": "^0.14.0 || ^15.0.0",
+    "react-redux": "^4.0.0",
+    "react-router": "^2.0.0",
+    "react-router-redux": "^4.0.0",
+    "redial": "^0.4.0",
+    "redux": "^3.0.0"
   },
   "dependencies": {
     "component-cookie": "1.1.2",
