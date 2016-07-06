@@ -1,6 +1,6 @@
 {
   "name": "rechannel",
-  "version": "0.8.0-preview.5",
+  "version": "0.8.0-preview.6",
   "description": "Opinionated glue for building web apps with `React` and `Redux`.",
   "keywords": [
     "rechannel",
@@ -51,8 +51,9 @@
     "redux": "^3.0.0"
   },
   "scripts": {
+    "clean": "rm -rf ./dist && mkdir ./dist",
     "build": "babel lib/* -d dist",
     "watch": "npm run build -- --watch",
-    "prepublish": "npm run build"
+    "prepublish": "npm run clean && npm run build"
   }
 }
