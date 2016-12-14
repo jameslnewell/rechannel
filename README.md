@@ -79,8 +79,8 @@ Common options:
 
 - `routes : Element|function` _Required_. A `<Route/>` element or a function creating a `<Route/>` element. Function are passed the `getState()` and `dispatch()` methods from the redux store (useful for restricting access in a `onEnter` hook). Learn more about configuring routes in the [React Router docs](https://github.com/reactjs/react-router/blob/master/docs/guides/RouteConfiguration.md).
 - `reducer : object` _Required_. A keyed object of reducer functions that may be passed to `combineReducers()`. Learn more about reducer functions in the [Redux docs](http://redux.js.org/docs/Glossary.html#reducer).
-- `middleware : array<function>` Optional. An array of middleware functions. Learn more about middleware functions in the [Redux docs](http://redux.js.org/docs/Glossary.html#middleware).
-- `enhancer : array<function>` Optional. An array of enhancer functions. Learn more about enhancer functions in the [Redux docs](http://redux.js.org/docs/Glossary.html#store-enhancer).
+- `middleware : array<function>|function` Optional. An array of middleware functions. Learn more about middleware functions in the [Redux docs](http://redux.js.org/docs/Glossary.html#middleware).
+- `enhancer : array<function>|function` Optional. An array of enhancer functions. Learn more about enhancer functions in the [Redux docs](http://redux.js.org/docs/Glossary.html#store-enhancer).
 - `history : History` Optional. A [history](https://www.npmjs.com/package/history) instance. Default's to `react-router`'s `browserHistory` on the client and the result of `react-router`'s `createMemoryHistory` on the server. Learn more about history objects in the `react-router` [Histories docs](https://github.com/reactjs/react-router/blob/master/docs/guides/Histories.md).
 
 Hooks:

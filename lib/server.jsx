@@ -6,10 +6,13 @@ import {match, RouterContext} from 'react-router';
 import {routerReducer} from 'react-router-redux';
 import {trigger} from 'redial';
 import createHtml from './createHtml';
+import configureMiddleware from './configureMiddleware';
 
 const isDevMode = process.env.NODE_ENV !== 'production';
 
 const defaultOptions = {
+  reducer: {},
+  reducer: {},
   reducer: {},
   middleware: [],
   enhancer: [],
@@ -22,8 +25,8 @@ const defaultOptions = {
  * @param   {object}          options
  * @param   {function}        options.routes            Your react-router routes
  * @param   {object}          options.reducer           Your redux reducer
- * @param   {Array<function>} [options.middleware]      Your redux middleware(s)
- * @param   {Array<function>} [options.enhancer]        Your Redux enhancer(s)
+ * @param   {Array<function>|function} [options.middleware]      Your redux middleware(s) or a factory function to create them
+ * @param   {Array<function>|function} [options.enhancer]        Your Redux enhancer(s) or a factory function to create them
  * @param   {History}         [options.history]         Your react-router history instance
  * @param   {Component}       [options.html]            Your root HTML component
  * @param   {function}        [options.send]            A function
@@ -46,13 +49,19 @@ export default function(options) {
     }
   }
 
-  //add middleware to freeze the redux state
-  const allTheMiddleware = [...middleware];
-  if (isDevMode) {
-    allTheMiddleware.push(require('redux-immutable-state-invariant')())
-  }
-
   return (req, res, next) => {
+
+    const context = {
+      headers: req.headers || {},
+      cookies: req.cookies || {},
+      query: req.query || {}
+    };
+
+    //add middleware to freeze the redux state
+    const allTheMiddleware = [...configureMiddleware(middleware, context)];
+    if (isDevMode) {
+      allTheMiddleware.push(require('redux-immutable-state-invariant')())
+    }
 
     //create the store
     const store = createStore(
@@ -67,16 +76,13 @@ export default function(options) {
       )
     );
 
-    const cookies = req.cookies || {};
-    const query = req.query || {};
-
-    Promise.resolve($init({getState: store.getState, dispatch: store.dispatch, cookies, query}))
+    Promise.resolve($init({getState: store.getState, dispatch: store.dispatch, ...context}))
       .then(() => {
 
         //create the routes if we've been given a factory function
         let routesForRequest = routes;
         if (typeof routes === 'function') {
-          routesForRequest = routes({getState: store.getState, dispatch: store.dispatch, query, cookies});
+          routesForRequest = routes({getState: store.getState, dispatch: store.dispatch, ...context});
         }
 
         //route the URL to a component
@@ -92,8 +98,7 @@ export default function(options) {
               location: renderProps.location,
               params: renderProps.params,
 
-              cookies,
-              query
+              ...context
 
             };
 

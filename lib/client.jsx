@@ -8,6 +8,7 @@ import {match, Router, useRouterHistory, browserHistory} from 'react-router';
 import {syncHistoryWithStore, routerReducer, routerMiddleware} from 'react-router-redux';
 import cookie from 'component-cookie';
 import qs from 'query-string';
+import configureMiddleware from './configureMiddleware';
 
 const isDevMode = process.env.NODE_ENV !== 'production';
 
@@ -24,13 +25,19 @@ const defaultOptions = {
  * @param   {object}          options
  * @param   {Element}         options.routes            Your react-router routes
  * @param   {object}          options.reducer           Your redux reducer
- * @param   {Array<function>} [options.middleware]      Your redux middleware(s)
- * @param   {Array<function>} [options.enhancer]        Your Redux enhancer(s)
+ * @param   {Array<function>|function} [options.middleware]      Your redux middleware(s) or a factory function to create them
+ * @param   {Array<function>|function} [options.enhancer]        Your Redux enhancer(s) or a factory function to create them
  * @param   {History}         [options.history]         Your react-router history instance
  * @param   {HTMLElement}     [options.element]         The HTMLElement which react will render into
  * @returns {function}
  */
 export default function(options) {
+
+  const context = {
+    headers: {},
+    cookies: cookie(),
+    query: qs.parse(window.location.search)
+  };
 
   let {
     routes, reducer, middleware, enhancer, history,
@@ -54,7 +61,7 @@ export default function(options) {
   }
 
   //add middleware to freeze the redux state
-  const allTheMiddleware = [...middleware, routerMiddleware(history)];
+  const allTheMiddleware = [...configureMiddleware(middleware, context), routerMiddleware(history)];
   if (isDevMode) {
     allTheMiddleware.unshift(require('redux-immutable-state-invariant')())
   }
@@ -75,15 +82,12 @@ export default function(options) {
     )
   );
 
-  const cookies = cookie();
-  const query = qs.parse(window.location.search);
-
-  Promise.resolve($init({getState: store.getState, dispatch: store.dispatch, cookies, query}))
+  Promise.resolve($init({getState: store.getState, dispatch: store.dispatch, ...context}))
     .then(() => {
 
       //create the routes if we've been given a factory function
       if (typeof routes === 'function') {
-        routes = routes({getState: store.getState, dispatch: store.dispatch, cookies, query});
+        routes = routes({getState: store.getState, dispatch: store.dispatch, ...context});
       }
 
       //create the enhanced history
@@ -109,8 +113,7 @@ export default function(options) {
                 location: renderProps.location,
                 params: renderProps.params,
 
-                cookies,
-                query
+                ...context
 
               };
 
