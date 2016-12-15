@@ -37,7 +37,7 @@ export default function(options) {
     html, send
   } = {...defaultOptions, ...options};
 
-  const Component = html || createHtml();
+  const Html = html || createHtml();
 
   //validate options
   if (isDevMode) {
@@ -67,16 +67,19 @@ export default function(options) {
       )
     );
 
-    const cookies = req.cookies || {};
-    const query = req.query || {};
+    const context = {
+      headers: req.headers || {},
+      cookies: req.cookies || {},
+      query: req.query || {}
+    };
 
-    Promise.resolve($init({getState: store.getState, dispatch: store.dispatch, cookies, query}))
+    Promise.resolve($init({getState: store.getState, dispatch: store.dispatch, ...context}))
       .then(() => {
 
         //create the routes if we've been given a factory function
         let routesForRequest = routes;
         if (typeof routes === 'function') {
-          routesForRequest = routes({getState: store.getState, dispatch: store.dispatch, query, cookies});
+          routesForRequest = routes({getState: store.getState, dispatch: store.dispatch, ...context});
         }
 
         //route the URL to a component
@@ -92,8 +95,7 @@ export default function(options) {
               location: renderProps.location,
               params: renderProps.params,
 
-              cookies,
-              query
+              ...context
 
             };
 
@@ -105,11 +107,11 @@ export default function(options) {
 
                 //render the app
                 const elements = (
-                  <Component state={store.getState()}>
+                  <Html {...context} state={store.getState()}>
                     <Provider store={store}>
                       <RouterContext {...renderProps} />
                     </Provider>
-                  </Component>
+                  </Html>
                 );
 
                 //render the layout

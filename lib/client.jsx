@@ -2,7 +2,6 @@ import React from 'react';
 import {render} from 'react-dom';
 import {trigger} from 'redial';
 import {Provider} from 'react-redux';
-import {createHistory} from 'history';
 import {createStore, combineReducers, compose, applyMiddleware} from 'redux';
 import {match, Router, useRouterHistory, browserHistory} from 'react-router';
 import {syncHistoryWithStore, routerReducer, routerMiddleware} from 'react-router-redux';
@@ -75,15 +74,18 @@ export default function(options) {
     )
   );
 
-  const cookies = cookie();
-  const query = qs.parse(window.location.search);
+  const context = {
+    headers: {},
+    cookies: cookie() || {},
+    query: qs.parse(window.location.search) || {}
+  };
 
-  Promise.resolve($init({getState: store.getState, dispatch: store.dispatch, cookies, query}))
+  Promise.resolve($init({getState: store.getState, dispatch: store.dispatch, ...context}))
     .then(() => {
 
       //create the routes if we've been given a factory function
       if (typeof routes === 'function') {
-        routes = routes({getState: store.getState, dispatch: store.dispatch, cookies, query});
+        routes = routes({getState: store.getState, dispatch: store.dispatch, ...context});
       }
 
       //create the enhanced history
@@ -109,8 +111,7 @@ export default function(options) {
                 location: renderProps.location,
                 params: renderProps.params,
 
-                cookies,
-                query
+                ...context
 
               };
 

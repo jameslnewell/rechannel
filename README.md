@@ -122,6 +122,11 @@ Returns a React component for rendering `<html>` on the server.
 
 ## Change log
 
+### 0.9.0
+
+- add: added `headers` as a parameter for all hooks
+- add: now passing `query`, `cookies` and `headers` to your `Html` component
+
 ### 0.8.0
 
 - add: added the ability to provide a custom `history` object
