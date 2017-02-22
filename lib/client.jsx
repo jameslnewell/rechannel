@@ -95,7 +95,7 @@ export default function(options) {
       enhancedHistory.listen(location => {
 
         //route the URL to a component
-        match({routes, location}, (routeError, redirectLocation, renderProps) => {
+        match({routes, history: enhancedHistory}, (routeError, redirectLocation, renderProps) => {
 
           if (window.__INITIAL_STATE__) {     //the current page was rendered by the server, we don't need to fetch
             delete window.__INITIAL_STATE__;
@@ -129,13 +129,19 @@ export default function(options) {
 
       });
 
-      //render the app
-      render(
-        <Provider store={store}>
-          <Router history={enhancedHistory} routes={routes}/>
-        </Provider>,
-        element
-      );
+      //route the URL to a component
+      //this is required for https://github.com/ReactTraining/react-router/blob/master/docs/guides/ServerRendering.md#async-routes
+      match({routes, history: enhancedHistory}, (routeError, redirectLocation, renderProps) => {
+
+        //render the app
+        render(
+          <Provider store={store}>
+            <Router {...renderProps}/>
+          </Provider>,
+          element
+        );
+
+      });
 
     })
     .catch(err => console.error(err))
