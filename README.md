@@ -122,6 +122,10 @@ Returns a React component for rendering `<html>` on the server.
 
 ## Change log
 
+### 0.10.0
+
+- add: support server rendered async routes as per https://github.com/ReactTraining/react-router/blob/master/docs/guides/ServerRendering.md#async-routes
+
 ### 0.9.0
 
 - add: added `headers` as a parameter for all hooks
