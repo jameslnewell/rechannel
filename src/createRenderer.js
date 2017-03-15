@@ -47,6 +47,7 @@ export default options => {
   };
 
   //allow the user to hot-reload the reducer
+  //TODO: only show these when `module.hot` is a thing
   const replaceReducer = (...args) => store.replaceReducer(...args);
 
   return {

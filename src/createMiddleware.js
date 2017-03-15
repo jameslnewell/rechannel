@@ -53,6 +53,7 @@ export default options => {
 
   };
 
+  //TODO: only show these when `module.hot` is a thing
   middleware.replaceComponent = () => {};
   middleware.replaceReducer = () => {};
 
