@@ -28,7 +28,7 @@ export default function(options) {
       <body>
         <div id="app" dangerouslySetInnerHTML={{__html: renderToString(children)}}/>
         <script dangerouslySetInnerHTML={{__html: `window.__INITIAL_STATE__=${JSON.stringify(state)}`}}/>
-        {scripts.map(script => (<script key={script} src={script}></script>))}
+        {scripts.map(script => (<script key={script} src={script} defer></script>))}
       </body>
       </html>
     );

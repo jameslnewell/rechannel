@@ -122,6 +122,12 @@ Returns a React component for rendering `<html>` on the server.
 
 ## Change log
 
+### 1.0.0
+
+- break: removed data pre-fetching
+- break: use latest `react-router`
+- break: bump minimal version of react
+
 ### 0.10.0
 
 - add: support server rendered async routes as per https://github.com/ReactTraining/react-router/blob/master/docs/guides/ServerRendering.md#async-routes

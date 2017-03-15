@@ -5,7 +5,7 @@ import {createStore, combineReducers, compose, applyMiddleware} from 'redux';
 import {match, RouterContext} from 'react-router';
 import {routerReducer} from 'react-router-redux';
 import {trigger} from 'redial';
-import createHtml from './createHtml';
+import createHtml from '../createHtml';
 
 const isDevMode = process.env.NODE_ENV !== 'production';
 
